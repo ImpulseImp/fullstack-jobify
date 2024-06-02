@@ -1,10 +1,10 @@
 import CreateJobForm from "@/components/CreateJobForm";
 
-const page = () => {
+const AddJobPage = () => {
   return (
     <div>
       <CreateJobForm />
     </div>
   );
 };
-export default page;
+export default AddJobPage;
