@@ -24,8 +24,9 @@ const formSchema = z.object({
 
 type FormFields = z.infer<typeof formSchema>;
 
-const onSubmit = async () => {
+const onSubmit = async (values: FormFields) => {
   await new Promise((res) => setTimeout(res, 2000));
+  console.log(values);
 };
 
 const CreateJobForm = () => {
