@@ -1,80 +1,75 @@
 "use client";
-import { z } from "zod";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+  JobStatus,
+  JobMode,
+  createAndEditJobSchema,
+  CreateAndEditJobType,
+} from "@/utils/types";
 
-const formSchema = z.object({
-  username: z.string().min(3, {
-    message: "Username must be at least 3 characters.",
-  }),
-  email: z.string().email(),
-});
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
 
-type FormFields = z.infer<typeof formSchema>;
+import { CustomFormField, CustomFormSelect } from "./FormComponents";
 
-const onSubmit = async (values: FormFields) => {
-  await new Promise((res) => setTimeout(res, 2000));
-  console.log(values);
-};
-
-const CreateJobForm = () => {
-  const form = useForm<FormFields>({
-    resolver: zodResolver(formSchema),
+function CreateJobForm() {
+  // 1. Define your form.
+  const form = useForm<CreateAndEditJobType>({
+    resolver: zodResolver(createAndEditJobSchema),
     defaultValues: {
-      username: "",
-      email: "",
+      position: "",
+      company: "",
+      location: "",
+      status: JobStatus.Pending,
+      mode: JobMode.FullTime,
     },
   });
+
+  function onSubmit(values: CreateAndEditJobType) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
+  }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>email</FormLabel>
-              <FormControl>
-                <Input placeholder="your email" {...field} />
-              </FormControl>
-              <FormDescription>This is your email</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">
-          {form.formState.isSubmitting ? "Loading..." : "Submit"}
-        </Button>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="rounded bg-muted p-8"
+      >
+        <h2 className="mb-6 text-4xl font-semibold capitalize">add job</h2>
+        <div className="grid items-start gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {/* position */}
+          <CustomFormField name="position" control={form.control} />
+          {/* company */}
+          <CustomFormField name="company" control={form.control} />
+          {/* location */}
+          <CustomFormField name="location" control={form.control} />
+
+          {/* job status */}
+          <CustomFormSelect
+            name="status"
+            control={form.control}
+            labelText="job status"
+            items={Object.values(JobStatus)}
+          />
+          {/* job  type */}
+          <CustomFormSelect
+            name="mode"
+            control={form.control}
+            labelText="job mode"
+            items={Object.values(JobMode)}
+          />
+
+          <Button type="submit" className="self-end capitalize">
+            create job
+          </Button>
+        </div>
       </form>
     </Form>
   );
-};
+}
 export default CreateJobForm;
